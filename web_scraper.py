@@ -1,5 +1,6 @@
 from http.cookiejar import CookieJar
 import mechanicalsoup
+import json
 
 
 def extract_challenge_title(page):
@@ -52,15 +53,15 @@ def write_data_to_file(file_name, data):
 	# if the file exists already then clear it out
 	open(file_name, 'w').close()
 	output = open(file_name, 'w', encoding='utf8')
-	output.write(str(data))
+	output.write(json.dumps(data))
 	output.close()
 
 
 def write_data_to_files(data):
-	write_data_to_file('easy.json', data['easy'])
-	write_data_to_file('medium.json', data['medium'])
-	write_data_to_file('hard.json', data['hard'])
-	write_data_to_file('none.json', data['none'])
+	write_data_to_file('easy.json', data["easy"])
+	write_data_to_file('medium.json', data["medium"])
+	write_data_to_file('hard.json', data["hard"])
+	write_data_to_file('none.json', data["none"])
 
 
 def retrieve_challenges(login_username, password, profile_username):
@@ -81,13 +82,13 @@ def retrieve_challenges(login_username, password, profile_username):
 	challenge_results = [process_challenge_link(br, link) for link in br.links(url_regex='^/results/')]
 
 	results = {
-		'easy': [],
-		'medium': [],
-		'hard': [],
-		'none': []
+		"easy": [],
+		"medium": [],
+		"hard": [],
+		"none": []
 	}
 	for result in challenge_results:
-		difficulty = difficulty_lookup.get(result['title'], 'none')
+		difficulty = difficulty_lookup.get(result["title"], "none")
 		results[difficulty].append(result)
 
 	write_data_to_files(results)
